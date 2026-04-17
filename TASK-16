@@ -1,0 +1,62 @@
+```java id="1m0q2y"
+/* ===================== USING FEIGN CLIENT ===================== */
+
+package com.serviceb;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@FeignClient(name = "SERVICE-A")
+public interface ServiceAClient {
+
+    @GetMapping("/api/a/data")
+    Object getData();
+}
+
+
+/* ===================== CONTROLLER ===================== */
+
+package com.serviceb;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/feign")
+public class FeignController {
+
+    @Autowired
+    ServiceAClient client;
+
+    @GetMapping("/call")
+    public Object callA() {
+        return client.getData();
+    }
+}
+
+
+/* ===================== MAIN ===================== */
+
+package com.serviceb;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+
+@EnableFeignClients
+@SpringBootApplication
+public class ServiceBApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ServiceBApplication.class, args);
+    }
+}
+
+/* ===================== application.properties ===================== */
+/*
+spring.application.name=SERVICE-B
+server.port=8082
+
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+*/
+```
